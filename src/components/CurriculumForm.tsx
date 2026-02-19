@@ -13,6 +13,7 @@ export interface FormData {
   level: string;
   duration: string;
   goals: string;
+  domain: string;
 }
 
 const levels = ["Beginner", "Intermediate", "Advanced"];
@@ -23,6 +24,7 @@ const CurriculumForm = ({ onGenerate, isLoading }: CurriculumFormProps) => {
     level: "Beginner",
     duration: "",
     goals: "",
+    domain: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -67,11 +69,10 @@ const CurriculumForm = ({ onGenerate, isLoading }: CurriculumFormProps) => {
                 key={level}
                 type="button"
                 onClick={() => setForm({ ...form, level })}
-                className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all border ${
-                  form.level === level
+                className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all border ${form.level === level
                     ? "bg-secondary text-secondary-foreground border-secondary shadow-sm"
                     : "bg-muted text-muted-foreground border-border hover:bg-accent/20"
-                }`}
+                  }`}
               >
                 {level}
               </button>
@@ -92,6 +93,21 @@ const CurriculumForm = ({ onGenerate, isLoading }: CurriculumFormProps) => {
             className="w-full px-4 py-3 rounded-md border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring font-body"
             required
             maxLength={50}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <Target className="h-4 w-4 text-secondary" />
+            Target Domain
+          </label>
+          <input
+            type="text"
+            value={form.domain}
+            onChange={(e) => setForm({ ...form, domain: e.target.value })}
+            placeholder="e.g. Healthcare, Finance, Tech"
+            className="w-full px-4 py-3 rounded-md border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring font-body"
+            maxLength={100}
           />
         </div>
 

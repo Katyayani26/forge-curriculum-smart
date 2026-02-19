@@ -11,9 +11,14 @@ export interface Curriculum {
   duration: string;
   learningOutcomes: string[];
   weeks: WeekPlan[];
+  bloomsTaxonomy: {
+    level: string;
+    percentage: number;
+  }[];
+  industryAlignmentScore: number;
 }
 
-export function generateMockCurriculum(subject: string, level: string, duration: string, goals: string): Curriculum {
+export function generateMockCurriculum(subject: string, level: string, duration: string, goals: string, domain?: string): Curriculum {
   // Parse duration to determine number of weeks
   const durationLower = duration.toLowerCase();
   let numWeeks = 6;
@@ -81,12 +86,24 @@ export function generateMockCurriculum(subject: string, level: string, duration:
     `Create original work that showcases proficiency in ${subject.toLowerCase()}`,
     ...goals.split(/[.,;]/).filter(g => g.trim().length > 5).slice(0, 2).map(g => g.trim()),
   ];
+  
+  // Mock Bloom's Taxonomy Distribution
+  const bloomsTaxonomy = [
+    { level: "Remembering", percentage: 10 },
+    { level: "Understanding", percentage: 15 },
+    { level: "Applying", percentage: 30 },
+    { level: "Analyzing", percentage: 20 },
+    { level: "Evaluating", percentage: 15 },
+    { level: "Creating", percentage: 10 },
+  ];
 
   return {
-    title: `${subject} — ${level} Curriculum`,
+    title: `${subject} — ${level} Curriculum${domain ? ` for ${domain}` : ''}`,
     level,
     duration,
     learningOutcomes,
     weeks,
+    bloomsTaxonomy,
+    industryAlignmentScore: Math.floor(Math.random() * (98 - 85) + 85),
   };
 }

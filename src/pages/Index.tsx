@@ -4,7 +4,9 @@ import { BookOpen, Sparkles, FileDown, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CurriculumForm, { type FormData } from "@/components/CurriculumForm";
 import CurriculumResult from "@/components/CurriculumResult";
-import { generateMockCurriculum, type Curriculum } from "@/lib/mockCurriculum";
+import type { Curriculum } from "@/lib/mockCurriculum";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import heroBg from "@/assets/hero-bg.jpg";
 
 const features = [
@@ -23,12 +25,20 @@ const Index = () => {
   const handleGenerate = async (data: FormData) => {
     setIsLoading(true);
     setSubject(data.subject);
-    // Simulate AI generation delay
-    await new Promise((r) => setTimeout(r, 1500));
-    const result = generateMockCurriculum(data.subject, data.level, data.duration, data.goals);
-    setCurriculum(result);
-    setIsLoading(false);
-    setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+    try {
+      const { data: result, error } = await supabase.functions.invoke("generate-curriculum", {
+        body: { subject: data.subject, level: data.level, duration: data.duration, goals: data.goals },
+      });
+      if (error) throw error;
+      if (result?.error) throw new Error(result.error);
+      setCurriculum(result as Curriculum);
+      setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+    } catch (e: any) {
+      console.error(e);
+      toast.error(e.message || "Failed to generate curriculum. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReset = () => {
